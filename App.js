@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, SafeAreaView, TextInput } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import Toast from 'react-native-toast-message';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function App () {
   const [colors, setColors] = useState([]);
@@ -9,18 +12,20 @@ export default function App () {
   }
   const clearColors = () => {
     setColors([]);
+};
+const copyToClipboard = (color) => {
+  Clipboard.setString(color);
+  Toast.show({
+    type: 'success',
+    position: 'bottom',
+    text1: 'Copied to clipboard!',
+    text2: color,
+    visibilityTime: 2000,
+    autoHide: true,
+    });
 }
 
-  //display the rgb codes in the view as a string
-  const displayColors = () => {
-    return colors.map((color, index) => {
-      return <Text key={index}>{color}</Text>
-    }
-    )
-  }
-
 return (
-    
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Generate Random Colors</Text>
 
@@ -53,13 +58,20 @@ return (
       data={colors}
       renderItem={({item}) => {
         return (
-          <View style={{ width: 100, height: 100, backgroundColor: item, marginVertical: 5, marginHorizontal: 5, borderRadius: 10, borderWidth: 1}}/>        
+          <View style={{ width: 110, height: 110, backgroundColor: item, marginVertical: 10, marginStart: 5, marginEnd: 5, borderRadius: 10, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center'}}>
+            
+            <TouchableOpacity style={{alignItems: 'center'}} onPress={() => copyToClipboard(item)}>
+              <Ionicons name="copy-outline" size={20} color="white" />
+              <Text style={{fontSize: 12, color: 'white'}}> { item } </Text>
+            </TouchableOpacity>
+          </View>
         ) 
       }}
       />
+      <Toast/>
     </SafeAreaView>
   );
-}
+};
 
 const randomRgb = () => {
   const red = Math.floor(Math.random() * 256)
@@ -74,15 +86,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
+    marginTop: '10%',
   },
   button: {
-    height: 50,
-    width: 100,
+    width: '25%',
+    height: '75%',
     backgroundColor: 'white',
-    marginBottom: 10,
-    marginHorizontal: 5,
-    marginTop: 10,
+    marginBottom: '3%',
+    marginHorizontal: '3%',
+    marginTop: '3%',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
@@ -94,6 +106,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: '3%',
   },
 });
